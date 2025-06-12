@@ -19,6 +19,7 @@ class ComputerCommand extends BaseCommand
         $computer = User::firstOrCreate(
             ['first_name'=>'Компьютер','source_id'=>SourceEnum::COMPUTER],
             ['status'=>UserStatusEnum::GAME,'source_user_id'=>0,'active_at'=>now()]);
+        $computer->refresh();
         $game_service = GameService::make($user,$computer);
         $game_service->start($user,$computer);
     }
