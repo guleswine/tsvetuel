@@ -24,12 +24,15 @@ enum SkillEnum: int
     public static function getSkills(int $level): int
     {
         $skills = 0;
-        $level_bit = 1<< ($level-2);
-        foreach (self::cases() as $skill){
-            if($skill->value<=$level_bit){
-                $skills = $skill->add($skills);
+        if( $level > 1){
+            $level_bit = 1<< ($level-2);
+            foreach (self::cases() as $skill){
+                if($skill->value<=$level_bit){
+                    $skills = $skill->add($skills);
+                }
             }
         }
+
         return $skills;
     }
 
