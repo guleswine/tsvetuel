@@ -42,7 +42,8 @@ class User extends Authenticatable
         'source_user_id',
         'active_at',
         'game_id',
-        'status'
+        'status',
+        'level'
     ];
 
     public function getNameAttribute(): string
