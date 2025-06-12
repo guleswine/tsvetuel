@@ -1,0 +1,65 @@
+version: '3.9'
+services:
+
+  #PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: trikolor
+    volumes:
+      - ./:/var/www
+      - ./storage/app/public/:/var/www/public/storage
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./docker/supervisor:/etc/supervisor/conf.d
+      - ./docker/supervisor/supervisord.conf:/etc/supervisor/supervisord.conf
+    container_name: app-trk
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    networks:
+      - app-network
+    command: /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+
+  #Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: webserver-trk
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8610:80"
+      - "4410:443"
+    networks:
+      - app-network
+
+
+  #PgSQL Service
+  db:
+    image: postgres:17.2
+    container_name: pgsql-trk
+    volumes:
+         - ./docker/pgsql:/var/lib/postgresql/data
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "5410:5432"
+    environment:
+      POSTGRES_DB: "trk"
+      POSTGRES_USER: "trk-user"
+      POSTGRES_PASSWORD: "password"
+      SERVICE_TAGS: dev
+      SERVICE_NAME: pgsql
+    networks:
+      - app-network
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
