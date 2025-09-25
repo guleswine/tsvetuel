@@ -1,9 +1,56 @@
+# Триколор
 
-### install
+Попробовать игру можно здесь: https://vk.com/coluel
 
-```
-sudo chown -R 1000:1000 /var/www/tsvetuel
-docker compose up -d
-docker compose exec app composer install
-docker compose exec app php artisan migrate
-```
+Это бэкенд для пошаговой тактической игры-бота "Триколор". Написан на Laravel.
+
+## Архитектура
+
+Логика построена вокруг состояний пользователя (`Lobby`, `Search`, `Game`). В зависимости от статуса, запросы игрока обрабатывает соответствующий хэндлер:
+
+- `LobbyHandler` — входная точка: поиск игры, просмотр статистики, помощь.
+- `SearchHandler` — состояние поиска игры, где можно его отменить.
+- `GameHandler` — основная игровая логика: ходы, применение скиллов.
+
+Действия игрока (ход, абилка) — это классы-команды в `app/Commands`.
+
+## Ключевые фичи
+
+- **Игровое поле:** 5x5.
+- **Режимы:** PvP и PvE (против компьютера).
+- **Скиллы:**
+    - `Разрушение`
+    - `Шпионаж`
+    - `Своя фигура`
+    - `Восстановление`
+    - `Пропуск фигуры`
+    - `Вихрь`
+
+## Структура кода
+
+- `app/Handlers` — обработчики состояний.
+- `app/Commands` — команды-действия игрока.
+- `app/Services/Game` — игровая логика.
+- `app/Enums` — константы (статусы, скиллы).
+- `config/game.php` — конфиги игры.
+
+## Запуск
+
+1.  **Клонируйте репозиторий и создайте `.env`:**
+    ```bash
+    git clone https://github.com/guleswine/tsvetuel && cd trikolor
+    cp .env.example .env
+    ```
+    > В `.env` нужно указать доступы к БД и VK API.
+
+2.  **Запустите Docker:**
+    ```bash
+    docker-compose up -d --build
+    ```
+
+3.  **Выполните установку и миграции:**
+    ```bash
+    docker-compose exec app bash -c "composer install && php artisan key:generate && php artisan migrate"
+    ```
+
+Бэкенд готов к работе.
