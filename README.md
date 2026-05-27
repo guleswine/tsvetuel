@@ -38,19 +38,19 @@
 
 1.  **Клонируйте репозиторий и создайте `.env`:**
     ```bash
-    git clone https://github.com/guleswine/tsvetuel && cd trikolor
+    git clone https://github.com/guleswine/tsvetuel && cd tsvetuel
     cp .env.example .env
     ```
     > В `.env` нужно указать доступы к БД и VK API.
 
 2.  **Запустите Docker:**
     ```bash
-    docker-compose up -d --build
+    docker compose up -d --build
     ```
 
 3.  **Выполните установку и миграции:**
     ```bash
-    docker-compose exec app bash -c "composer install && php artisan key:generate && php artisan migrate"
+    docker compose exec app bash -c "composer install && php artisan key:generate && php artisan migrate"
     ```
 
 Бэкенд готов к работе.
